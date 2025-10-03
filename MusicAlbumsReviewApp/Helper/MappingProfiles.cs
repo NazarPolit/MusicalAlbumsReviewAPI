@@ -11,6 +11,7 @@ namespace MusicAlbumsReviewApp.Helper
             CreateMap<Album, AlbumDto>();
             CreateMap<Genre, GenreDto>();
             CreateMap<Country, CountryDto>();
-        }
+			CreateMap<Artist, ArtistDto>();
+		}
     }
 }

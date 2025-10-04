@@ -21,7 +21,7 @@ namespace MusicAlbumsReviewApp.Controllers
 		}
 
 		[HttpGet]
-		[ProducesResponseType(200, Type = typeof(IEnumerable<Album>))]
+		[ProducesResponseType(200, Type = typeof(IEnumerable<Country>))]
 		public async Task<IActionResult> GetCountries()
 		{
 			var countries = _mapper.Map<List<CountryDto>>(await _countryRepository.GetCountries());

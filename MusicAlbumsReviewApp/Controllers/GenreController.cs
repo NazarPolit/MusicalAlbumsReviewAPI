@@ -21,7 +21,7 @@ namespace MusicAlbumsReviewApp.Controllers
 		}
 
 		[HttpGet]
-		[ProducesResponseType(200, Type = typeof(IEnumerable<Album>))]
+		[ProducesResponseType(200, Type = typeof(IEnumerable<Genre>))]
 		public async Task<IActionResult> GetGenres()
 		{
 			var genres = _mapper.Map<List<GenreDto>>(await _genreRepository.GetGenres());

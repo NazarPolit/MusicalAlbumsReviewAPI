@@ -24,7 +24,7 @@ namespace MusicAlbumsReviewApp.Controllers
 		}
 
 		[HttpGet]
-		[ProducesResponseType(200, Type = typeof(IEnumerable<Album>))]
+		[ProducesResponseType(200, Type = typeof(IEnumerable<Artist>))]
 		public async Task<IActionResult> GetArtists()
 		{
 			var artists = _mapper.Map<List<ArtistDto>>(await _artistRepository.GetArtists());
@@ -36,7 +36,7 @@ namespace MusicAlbumsReviewApp.Controllers
 		}
 
 		[HttpGet("{artistId}")]
-		[ProducesResponseType(200, Type = typeof(Album))]
+		[ProducesResponseType(200, Type = typeof(Artist))]
 		[ProducesResponseType(400)]
 		public async Task<IActionResult> GetArtist(int artistId)
 		{
@@ -68,8 +68,8 @@ namespace MusicAlbumsReviewApp.Controllers
 			return Ok(artist);
 		}
 
-		[HttpGet("{albumId}/artist")]
-		[ProducesResponseType(200, Type = typeof(Album))]
+		[HttpGet("artist/{albumId}")]
+		[ProducesResponseType(200, Type = typeof(Artist))]
 		[ProducesResponseType(400)]
 		public async Task<IActionResult> GetArtistOfAlbum(int albumId)
 		{

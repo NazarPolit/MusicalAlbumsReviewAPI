@@ -4,6 +4,7 @@ using MusicAlbumsReviewApp.Helper;
 using MusicAlbumsReviewApp.Interfaces;
 using MusicAlbumsReviewApp.Models;
 using MusicAlbumsReviewApp.Repository;
+using System.Text.Json.Serialization;
 
 namespace MusicAlbumsReviewApp
 {
@@ -17,12 +18,18 @@ namespace MusicAlbumsReviewApp
 
 			builder.Services.AddControllers();
 			builder.Services.AddTransient<Seed>();
+
+			//builder.Services.AddControllers().AddJsonOptions(x => 
+			//				x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+
 			builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());            
 			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 			builder.Services.AddScoped<IAlbumRepository, AlbumRepository>();
 			builder.Services.AddScoped<IGenreRepository, GenreRepository>();
 			builder.Services.AddScoped<ICountryRepository, CountryRepository>();
 			builder.Services.AddScoped<IArtistRepository, ArtistRepository>();
+			builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
+			builder.Services.AddScoped<IListenerRepository, ListenerRepository>();
 			builder.Services.AddEndpointsApiExplorer();
 			builder.Services.AddSwaggerGen();
 

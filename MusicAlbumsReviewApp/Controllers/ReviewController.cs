@@ -21,7 +21,7 @@ namespace MusicAlbumsReviewApp.Controllers
 		}
 
 		[HttpGet]
-		[ProducesResponseType(200, Type = typeof(IEnumerable<Album>))]
+		[ProducesResponseType(200, Type = typeof(IEnumerable<Review>))]
 		public async Task<IActionResult> GetReviews()
 		{
 			var reviews = _mapper.Map<List<ReviewDto>>(await _reviewRepository.GetReviews());
@@ -33,7 +33,7 @@ namespace MusicAlbumsReviewApp.Controllers
 		}
 
 		[HttpGet("{reviewId}")]
-		[ProducesResponseType(200, Type = typeof(Album))]
+		[ProducesResponseType(200, Type = typeof(Review))]
 		[ProducesResponseType(400)]
 		public async Task<IActionResult> GetReview(int reviewId)
 		{
@@ -48,12 +48,12 @@ namespace MusicAlbumsReviewApp.Controllers
 			return Ok(review);
 		}
 
-		[HttpGet("review/{albumId}")]
+		[HttpGet("album/{albumId}")]
 		[ProducesResponseType(200, Type = typeof(Album))]
 		[ProducesResponseType(400)]
 		public async Task<IActionResult> GetReviewsOfAlbum(int albumId)
 		{
-			var review = _mapper.Map<ReviewDto>(
+			var review = _mapper.Map<List<ReviewDto>>(
 						 await _reviewRepository.GetReviewsOfAlbum(albumId));
 
 			if(!ModelState.IsValid) 

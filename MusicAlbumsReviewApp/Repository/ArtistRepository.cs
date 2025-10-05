@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using MusicAlbumsReviewApp.Data;
 using MusicAlbumsReviewApp.Interfaces;
 using MusicAlbumsReviewApp.Models;
+using System.Diagnostics.Metrics;
 
 namespace MusicAlbumsReviewApp.Repository
 {
@@ -15,6 +16,7 @@ namespace MusicAlbumsReviewApp.Repository
 			_context = context;
 		}
 
+		//GET Methods
 		public bool ArtistExists(int artistId)
 		{
 			return _context.Artists.Any(a => a.Id == artistId);
@@ -38,6 +40,26 @@ namespace MusicAlbumsReviewApp.Repository
 		public async Task<ICollection<Artist>> GetArtists()
 		{
 			return await _context.Artists.ToListAsync();
+		}
+
+		//POST Methods
+		public async Task<Artist?> GetArtistByNameAsync(string name)
+		{
+			return await _context.Artists.
+				Where(a => a.Name.Trim().ToUpper() == name.Trim().ToUpper())
+				.FirstOrDefaultAsync();
+		}
+
+		public async Task<bool> Save()
+		{
+			var saved = await _context.SaveChangesAsync();
+			return saved > 0 ? true : false;
+		}
+
+		public async Task<bool> CreateArtist(Artist artist)
+		{
+			await _context.AddAsync(artist);
+			return await Save();
 		}
 	}
 }

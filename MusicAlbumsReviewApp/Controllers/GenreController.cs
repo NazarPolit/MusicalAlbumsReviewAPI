@@ -20,6 +20,7 @@ namespace MusicAlbumsReviewApp.Controllers
 			_mapper = mapper;
 		}
 
+		// GET Methods
 		[HttpGet]
 		[ProducesResponseType(200, Type = typeof(IEnumerable<Genre>))]
 		public async Task<IActionResult> GetGenres()
@@ -60,6 +61,36 @@ namespace MusicAlbumsReviewApp.Controllers
 				return BadRequest();
 
 			return  Ok(albums);
+		}
+
+		[HttpPost]
+		[ProducesResponseType(204)]
+		[ProducesResponseType(400)]
+		public async Task<IActionResult> CreateGenre([FromBody] GenreDto genreCreate)
+		{
+			if(genreCreate == null)
+				return BadRequest(ModelState);
+
+			var geners = await _genreRepository.GetGenreByNameAsync(genreCreate.Name);
+
+			if(geners != null)
+			{
+				ModelState.AddModelError("", "Genre already exists");
+				return StatusCode(422, ModelState);
+			}	
+
+			if(!ModelState.IsValid)
+				return BadRequest(ModelState);
+
+			var genreMap = _mapper.Map<Genre>(genreCreate);
+
+			if(!await _genreRepository.CreateGenre(genreMap))
+			{
+				ModelState.AddModelError("", "Something went wrong while saving");
+				return StatusCode(500, ModelState);
+			}
+
+			return Ok("Successfully created");
 		}
 	}
 

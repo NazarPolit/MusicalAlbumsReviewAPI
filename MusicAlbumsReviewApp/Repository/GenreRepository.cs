@@ -9,11 +9,13 @@ namespace MusicAlbumsReviewApp.Repository
 	{
 		private readonly DataContext _context;
 
+		//GET Methods
 		public GenreRepository(DataContext context)
         {
 			_context = context;
 		}
-        public bool GenreExists(int id)
+
+		public bool GenreExists(int id)
 		{
 			return  _context.Genres.Any(g => g.Id == id);
 		}
@@ -32,5 +34,25 @@ namespace MusicAlbumsReviewApp.Repository
 		{
 			return await _context.Genres.ToListAsync();
 		}
+
+		// POST Methods
+		public async Task<bool> CreateGenre(Genre genre)
+		{
+			await _context.AddAsync(genre);
+			return await Save();
+		}
+		public async Task<bool> Save()
+		{
+			var saved = await _context.SaveChangesAsync();
+			return saved > 0 ? true : false;
+		}
+
+		public async Task<Genre?> GetGenreByNameAsync(string name)
+		{
+			return await _context.Genres
+				.Where(g => g.Name.Trim().ToUpper() == name.Trim().ToUpper())
+				.FirstOrDefaultAsync();
+		}
+
 	}
 }

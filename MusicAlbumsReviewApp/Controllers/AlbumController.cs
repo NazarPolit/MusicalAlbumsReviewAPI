@@ -21,6 +21,7 @@ namespace MusicAlbumsReviewApp.Controllers
 			_mapper = mapper;
 		}
 
+		//GET Methods
 		[HttpGet]
 		[ProducesResponseType(200, Type = typeof(IEnumerable<Album>))]
 		public async Task<IActionResult> GetAlbums()
@@ -63,6 +64,37 @@ namespace MusicAlbumsReviewApp.Controllers
 				return BadRequest();
 
 			return Ok(rating);
+		}
+
+		//POST Methods
+		[HttpPost]
+		[ProducesResponseType(204)]
+		[ProducesResponseType(400)]
+		public async Task<IActionResult> CreateAlbum([FromQuery] int artistId, [FromQuery] int genreId, [FromBody] AlbumDto albumCreate)
+		{
+			if (albumCreate == null)
+				return BadRequest(ModelState);
+
+			var albums = await _albumRepository.GetAlbumByTitleAsync(albumCreate.Title);
+
+			if (albums != null)
+			{
+				ModelState.AddModelError("", "Album already exists");
+				return StatusCode(422, ModelState);
+			}
+
+			if (!ModelState.IsValid)
+				return BadRequest(ModelState);
+
+			var albumMap = _mapper.Map<Album>(albumCreate);
+
+			if (!await _albumRepository.CreateAlbum(artistId, genreId, albumMap))
+			{
+				ModelState.AddModelError("", "Something went wrong while saving");
+				return StatusCode(500, ModelState);
+			}
+
+			return Ok("Successfully created");
 		}
 	}
 }

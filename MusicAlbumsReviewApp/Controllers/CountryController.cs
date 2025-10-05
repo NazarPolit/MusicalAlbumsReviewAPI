@@ -20,6 +20,7 @@ namespace MusicAlbumsReviewApp.Controllers
 			_mapper = mapper;
 		}
 
+		//GET Methods
 		[HttpGet]
 		[ProducesResponseType(200, Type = typeof(IEnumerable<Country>))]
 		public async Task<IActionResult> GetCountries()
@@ -60,6 +61,37 @@ namespace MusicAlbumsReviewApp.Controllers
 				return BadRequest();
 
 			return Ok(country);
+		}
+
+		//POST Method
+		[HttpPost]
+		[ProducesResponseType(204)]
+		[ProducesResponseType(400)]
+		public async Task<IActionResult> CreateCountry([FromBody] CountryDto countryCreate)
+		{
+			if (countryCreate == null)
+				return BadRequest(ModelState);
+
+			var countries = await _countryRepository.GetCountryByNameAsync(countryCreate.Name);
+
+			if (countries != null)
+			{
+				ModelState.AddModelError("", "Country already exists");
+				return StatusCode(422, ModelState);
+			}
+
+			if (!ModelState.IsValid)
+				return BadRequest(ModelState);
+
+			var countryMap = _mapper.Map<Country>(countryCreate);
+
+			if (!await _countryRepository.CreateCountry(countryMap))
+			{
+				ModelState.AddModelError("", "Something went wrong while saving");
+				return StatusCode(500, ModelState);
+			}
+
+			return Ok("Successfully created");
 		}
 	}
 }

@@ -15,6 +15,7 @@ namespace MusicAlbumsReviewApp.Repository
 			_context = context;
 		}
 
+		// GET Methods
 		public async Task<ICollection<Album>> GetAlbums()
 		{
 			return await _context.Albums.OrderBy(a => a.Id).ToListAsync();
@@ -45,6 +46,43 @@ namespace MusicAlbumsReviewApp.Repository
 			return  _context.Albums.Any(a => a.Id == albmId);
 		}
 
+		//POST Methods
+		public async Task<Album?> GetAlbumByTitleAsync(string title)
+		{
+			return await _context.Albums.
+				Where(a => a.Title.Trim().ToUpper() == title.Trim().ToUpper())
+				.FirstOrDefaultAsync();
+		}
 
-    }
+		public async Task<bool> CreateAlbum(int artistId, int genreId, Album album)
+		{
+			var albumArtistEntity = await _context.Artists.FindAsync(artistId);
+			var genre = await _context.Genres.FindAsync(genreId);
+
+			var albumArtist = new AlbumArtist()
+			{
+				Artist = albumArtistEntity,
+				Album = album,
+
+			};
+
+			await _context.AddAsync(albumArtist);
+
+			var albumGenre = new AlbumGenre()
+			{
+				Genre = genre,
+				Album = album
+			};
+
+			await _context.AddAsync(albumGenre);
+
+			return await Save();
+		}
+
+		public async Task<bool> Save()
+		{
+			var saved = await _context.SaveChangesAsync();
+			return saved > 0 ? true : false;
+		}
+	}
 }

@@ -11,6 +11,7 @@ namespace MusicAlbumsReviewApp.Repository
 		private readonly DataContext _context;
 		private readonly IMapper _mapper;
 
+		//GET Mothods
 		public CountryRepository(DataContext context, IMapper mapper) 
 		{
 			_context = context;
@@ -39,6 +40,26 @@ namespace MusicAlbumsReviewApp.Repository
 		public async Task<Country> GetCountryByArtist(int artistId)
 		{
 			return await _context.Artists.Where(a =>  a.Id == artistId).Select(c => c.Country).FirstOrDefaultAsync();
+		}
+
+		//POST Methods
+		public async Task<bool> CreateCountry(Country country)
+		{
+			await _context.AddAsync(country);
+			return await Save();
+		}
+
+		public async Task<Country?> GetCountryByNameAsync(string name)
+		{
+			return await _context.Countries.
+				Where(c => c.Name.Trim().ToUpper() == name.Trim().ToUpper())
+				.FirstOrDefaultAsync();
+		}
+
+		public async Task<bool> Save()
+		{
+			var saved = await _context.SaveChangesAsync();
+			return saved > 0 ? true : false; 
 		}
 	}
 }

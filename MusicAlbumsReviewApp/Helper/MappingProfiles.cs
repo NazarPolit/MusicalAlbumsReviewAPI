@@ -9,10 +9,14 @@ namespace MusicAlbumsReviewApp.Helper
         public MappingProfiles()
         {
             CreateMap<Album, AlbumDto>();
-            CreateMap<Genre, GenreDto>();
-            CreateMap<Country, CountryDto>();
+			CreateMap<AlbumDto, Album>();
+			CreateMap<Genre, GenreDto>();
+			CreateMap<GenreDto, Genre>();
+			CreateMap<Country, CountryDto>();
+			CreateMap<CountryDto, Country>();
+			CreateMap<ArtistDto, Artist>();
 			CreateMap<Artist, ArtistDto>();
-            CreateMap<Review, ReviewDto>();
+			CreateMap<Review, ReviewDto>();
             CreateMap<Listener, ListenerDto>();
 		}
     }

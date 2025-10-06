@@ -14,6 +14,12 @@ namespace MusicAlbumsReviewApp.Interfaces
 		//For POST Methods
 		Task<Album?> GetAlbumByTitleAsync(string title);
 		Task<bool> CreateAlbum(int artistId, int genreId, Album album);
+
+		//For PUT Methods
+		Task<bool> UpdateAlbum(int artistId, int genreId, Album album);
+
+		//For DELETE Method
+		Task<bool> DeleteAlbum(Album album);
 		Task<bool> Save();
 	}
 }

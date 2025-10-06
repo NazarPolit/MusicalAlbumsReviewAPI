@@ -14,6 +14,13 @@ namespace MusicAlbumsReviewApp.Interfaces
 		//For POST Methods
 		Task<Country?> GetCountryByNameAsync(string name);
 		Task<bool> CreateCountry(Country country);
+
+		//For PUT Method
+		Task<bool> UpdateCountry(Country country);
+
+		//For DELETE Method
+		Task<bool> DeleteCountry(Country country);
+
 		Task<bool> Save();
 	}
 }

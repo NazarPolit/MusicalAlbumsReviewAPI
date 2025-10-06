@@ -13,6 +13,13 @@ namespace MusicAlbumsReviewApp.Interfaces
 		//For POST Method
 		Task<Genre?> GetGenreByNameAsync(string name);
 		Task<bool> CreateGenre(Genre genre);
+
+		//For PUT Method
+		Task<bool> UpdateGenre(Genre genre);
+
+		//For DELETE Method
+		Task<bool> DeleteGenre(Genre genre); 
+
 		Task<bool> Save();
 	}
 }

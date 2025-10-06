@@ -41,11 +41,6 @@ namespace MusicAlbumsReviewApp.Repository
 			await _context.AddAsync(genre);
 			return await Save();
 		}
-		public async Task<bool> Save()
-		{
-			var saved = await _context.SaveChangesAsync();
-			return saved > 0 ? true : false;
-		}
 
 		public async Task<Genre?> GetGenreByNameAsync(string name)
 		{
@@ -54,5 +49,25 @@ namespace MusicAlbumsReviewApp.Repository
 				.FirstOrDefaultAsync();
 		}
 
+		// Update Method
+
+		public async Task<bool> UpdateGenre(Genre genre)
+		{
+			_context.Update(genre);
+			return await Save();
+		}
+
+		public async Task<bool> Save()
+		{
+			var saved = await _context.SaveChangesAsync();
+			return saved > 0 ? true : false;
+		}
+
+		//DELETE Method
+		public async Task<bool> DeleteGenre(Genre genre)
+		{
+			_context.Remove(genre);
+			return await Save();
+		}
 	}
 }

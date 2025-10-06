@@ -61,5 +61,19 @@ namespace MusicAlbumsReviewApp.Repository
 			await _context.AddAsync(artist);
 			return await Save();
 		}
+
+		//PUT Methods
+		public async Task<bool> UpdateArtist(Artist artist)
+		{
+			_context.Update(artist);
+			return await Save();
+		}
+
+		//DELETE Method
+		public async Task<bool> DeleteArtist(Artist artist)
+		{
+			_context.Remove(artist);
+			return await Save();
+		}
 	}
 }

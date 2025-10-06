@@ -120,5 +120,54 @@ namespace MusicAlbumsReviewApp.Controllers
 
 			return Ok("Successfully created");
 		}
+
+		//PUT Method
+		[HttpPut("{artistId}")]
+		[ProducesResponseType(204)]
+		[ProducesResponseType(400)]
+		[ProducesResponseType(404)]
+		public async Task<IActionResult> UpdateArtist(int artistId, [FromBody] ArtistDto updatedArtist)
+		{
+			if (updatedArtist == null)
+				return BadRequest(ModelState);
+
+			if (!_artistRepository.ArtistExists(artistId))
+				return NotFound(new { message = "Not Found" });
+
+			if (!ModelState.IsValid)
+				return BadRequest(ModelState);
+
+			var artistMap = _mapper.Map<Artist>(updatedArtist);
+			artistMap.Id = artistId;
+
+			if (!await _artistRepository.UpdateArtist(artistMap))
+			{
+				ModelState.AddModelError("", "Something went wrong updating artist");
+				return StatusCode(500, ModelState);
+			}
+
+			return NoContent();
+		}
+
+		//DELETE Method
+		[HttpDelete("{artistId}")]
+		[ProducesResponseType(400)]
+		[ProducesResponseType(204)]
+		[ProducesResponseType(404)]
+		public async Task<IActionResult> DeleteArtist(int artistId)
+		{
+			if (!_artistRepository.ArtistExists(artistId))
+				return NotFound();
+
+			var artistToDelete = await _artistRepository.GetArtist(artistId);
+
+			if (!ModelState.IsValid)
+				return BadRequest(ModelState);
+
+			if (!await _artistRepository.DeleteArtist(artistToDelete))
+				ModelState.AddModelError("", "Something wrong with deleting artist");
+
+			return NoContent();
+		}
 	}
 }

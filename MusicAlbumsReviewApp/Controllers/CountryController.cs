@@ -93,5 +93,53 @@ namespace MusicAlbumsReviewApp.Controllers
 
 			return Ok("Successfully created");
 		}
+
+		//PUT Method
+		[HttpPut("{countryId}")]
+		[ProducesResponseType(204)]
+		[ProducesResponseType(400)]
+		[ProducesResponseType(404)]
+		public async Task<IActionResult> UpdateCountry(int countryId, [FromBody] CountryDto updatedCountry)
+		{
+			if (updatedCountry == null)
+				return BadRequest(ModelState);
+
+			if (!_countryRepository.CountriesExists(countryId))
+				return NotFound(new { message = "Not Found" });
+
+			if (!ModelState.IsValid)
+				return BadRequest(ModelState);
+
+			var countryMap = _mapper.Map<Country>(updatedCountry);
+			countryMap.Id = countryId;
+
+			if (!await _countryRepository.UpdateCountry(countryMap))
+			{
+				ModelState.AddModelError("", "Something went wrong updating country");
+				return StatusCode(500, ModelState);
+			}
+
+			return NoContent();
+		}
+
+		[HttpDelete("{countryId}")]
+		[ProducesResponseType(400)]
+		[ProducesResponseType(204)]
+		[ProducesResponseType(404)]
+		public async Task<IActionResult> DeleteCountry(int countryId)
+		{
+			if (!_countryRepository.CountriesExists(countryId))
+				return NotFound();
+
+			var countryToDelete = await _countryRepository.GetCountry(countryId);
+
+			if (!ModelState.IsValid)
+				return BadRequest(ModelState);
+
+			if (!await _countryRepository.DeleteCountry(countryToDelete))
+				ModelState.AddModelError("", "Something wrong with deleting country");
+
+			return NoContent();
+		}
 	}
 }

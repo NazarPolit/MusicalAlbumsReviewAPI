@@ -13,11 +13,15 @@ namespace MusicAlbumsReviewApp.Controllers
 	public class AlbumController : Controller
 	{
 		private readonly IAlbumRepository _albumRepository;
+		private readonly IArtistRepository _artistRepository;
+		private readonly IReviewRepository _reviewRepository;
 		private readonly IMapper _mapper;
 
-		public AlbumController(IAlbumRepository albumRepository, IMapper mapper)
+		public AlbumController(IAlbumRepository albumRepository,IArtistRepository artistRepository, IReviewRepository reviewRepository, IMapper mapper)
         {
 			_albumRepository = albumRepository;
+			_artistRepository = artistRepository;
+			_reviewRepository = reviewRepository;
 			_mapper = mapper;
 		}
 
@@ -66,7 +70,7 @@ namespace MusicAlbumsReviewApp.Controllers
 			return Ok(rating);
 		}
 
-		//POST Methods
+		//POST Method
 		[HttpPost]
 		[ProducesResponseType(204)]
 		[ProducesResponseType(400)]
@@ -95,6 +99,62 @@ namespace MusicAlbumsReviewApp.Controllers
 			}
 
 			return Ok("Successfully created");
+		}
+
+		//PUT Method
+		[HttpPut("{albumId}")]
+		[ProducesResponseType(204)]
+		[ProducesResponseType(400)]
+		[ProducesResponseType(404)]
+		public async Task<IActionResult> UpdateAlbum([FromQuery] int artistId, int albumId, [FromQuery] int genreId, [FromBody] AlbumDto updatedAlbum)
+		{
+			if (updatedAlbum == null)
+				return BadRequest(ModelState);
+
+			if (!_albumRepository.AlbumExists(albumId))
+				return NotFound(new { message = "Not Found" });
+
+			if (!ModelState.IsValid)
+				return BadRequest(ModelState);
+
+			var albumMap = _mapper.Map<Album>(updatedAlbum);
+			albumMap.Id = albumId;
+
+			if (!await _albumRepository.UpdateAlbum(artistId, genreId, albumMap))
+			{
+				ModelState.AddModelError("", "Something went wrong updating album");
+				return StatusCode(500, ModelState);
+			}
+
+			return NoContent();
+		}
+
+		//DELETE Method
+		[HttpDelete("{albumId}")]
+		[ProducesResponseType(400)]
+		[ProducesResponseType(204)]
+		[ProducesResponseType(404)]
+		public async Task<IActionResult> DeleteAlbum(int albumId)
+		{
+			if (!_albumRepository.AlbumExists(albumId))
+				return NotFound();
+
+			var reviewsToDelete = await _reviewRepository.GetReviewsOfAlbum(albumId);
+
+			var albumToDelete = await _albumRepository.GetAlbum(albumId);
+
+			if (!ModelState.IsValid)
+				return BadRequest(ModelState);
+
+			if (!await _reviewRepository.DeleteReviews(reviewsToDelete.ToList())) 
+			{
+				ModelState.AddModelError("", "Something wrong with deleting reviews");
+			}
+
+			if (!await _albumRepository.DeleteAlbum(albumToDelete))
+				ModelState.AddModelError("", "Something wrong with deleting album");
+
+			return NoContent();
 		}
 	}
 }

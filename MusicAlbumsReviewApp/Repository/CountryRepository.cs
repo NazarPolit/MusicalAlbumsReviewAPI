@@ -61,5 +61,19 @@ namespace MusicAlbumsReviewApp.Repository
 			var saved = await _context.SaveChangesAsync();
 			return saved > 0 ? true : false; 
 		}
+
+		//PUT Method
+		public async Task<bool> UpdateCountry(Country country)
+		{
+			_context.Update(country);
+			return await Save();
+		}
+
+		//DELETE Method
+		public async Task<bool> DeleteCountry(Country country)
+		{
+			_context.Remove(country);
+			return await Save();
+		}
 	}
 }
